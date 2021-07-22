@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- <meta http-equiv="refresh" content="2; url=login/login_cover.php"> -->
+	<title>FUKU-SHOUT</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js">
+	<style>
+		body.bg {
+			position: relative;
+			width: 100%;
+			min-height: 100vh;
+			background-size: cover;
+			background-position: center;
+			overflow-y: scroll;
+			-ms-overflow-style: none;
+			/* IE, Edge 対応 */
+			scrollbar-width: none;
+			/* Firefox 対応 */
+		}
+
+		.bg::-webkit-scrollbar {
+			display: none;
+		}
+
+		.title {
+			padding: 10%;
+			font-family: 'Fredoka One', cursive;
+			font-size: 100px;
+			font-weight: bolder;
+			color: #fdb933;
+			text-shadow: 0 0 13px #666;
+			transform: rotate(-9deg);
+			-moz-transform: rotate(-9deg);
+			-webkit-transform: rotate(-9deg);
+			width: 40%;
+		}
+
+		.wrap {
+			display: flex;
+			justify-content: center;
+			align-items: flex-end;
+		}
+
+		.image {
+			width: 60%;
+		}
+
+		.fuku {
+			animation: fuwafuwa 2s infinite ease-in-out;
+		}
+
+		@keyframes fuwafuwa {
+			0% {
+				transform: translate(0, 0);
+			}
+
+			50% {
+				transform: translate(0, -20px);
+			}
+
+			100% {
+				transform: translate(0, 0);
+			}
+		}
+
+		ul {
+			list-style: none;
+		}
+	</style>
+</head>
+
+<body class="bg" id="bg">
+	<div class="wrap">
+		<div>
+			<div class="title">
+				FUKU<br>SHOUT<br>GAME
+			</div>
+			<div>
+				<div class="ui inverted segment">
+					<button class="ui inverted teal button" type=“button”
+						onclick="location.href='page3.html'">start</button>
+				</div>
+			</div>
+		</div>
+		<div class="image">
+			<ul>
+				<li><img id="pic" src="img/fuku.png" class="fuku"></li>
+			</ul>
+		</div>
+	</div>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<script src="Shards-master/shards.js"></script>
+	<script>
+		$(function () {
+			$('#bg').shards(
+				[10, 35, 180, .15],
+				[255, 20, 220, .25],
+				[0, 0, 0, .25],
+				20,
+				.58,
+				2,
+				.15,
+				true
+			);
+		});
+
+
+		const img = ["img/fuku.png", "img/fukuface.png"];
+
+		let count = -1;
+
+		picChange();
+
+		function picChange() {
+
+			count++;
+			// カウントが最大になれば初期値に戻す
+			if (count == img.length) count = 0;
+			//画像選択
+			pic.src = img[count];
+			//1秒ごとに実行
+			setTimeout("picChange()", 1200);
+		}
+	</script>
+</body>
+
+</html>
