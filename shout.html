@@ -35,12 +35,40 @@
 			border: 1px solid #fff;
 			bottom: 1px;
 		}
+
+		#vol_effect {
+			background: rgb(0, 204, 255);
+			text-align: right;
+			font-size: 25px;
+		}
+
+		.photo-area {
+			width: 100%;
+			height: 500px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+
+		}
 	</style>
 </head>
 
-<body>
-	<img src="img/fuku.png"></img>
+<body class="bg" id="bg">
+	<!-- <img src="img/fuku.png"></img> -->
+	<!-- 音量 -->
+	<header>
+		<p id='volume'></p>
+		<div id='vol_effect'></div>
+		<input type='button' value='START' onclick='audio_input()' />
+		<button id="stop">STOP</button>
+		<div id="fugu" class="fugu"></div>
+		<div class="photo-area">
+			<img id="fugu-img" src="img/fuguu.jpeg" class="fugu-img" alt="">
+		</div>
+	</header>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<script src="Shards-master/shards.js"></script>
 	<script>
 		jQuery(document).ready(function ($) {
 			var bArray = [];
@@ -76,8 +104,122 @@
 
 				//0.35秒ごとに泡を発生させる
 			}, 350);
-
 		});
+
+
+		function audio_input() {
+			window.AudioContext = window.AudioContext || window.webkitAudioContext;
+			var context = new AudioContext();
+			//AnalyserNodeオブジェクト(音声解析用クラス)のインスタンス化
+			var analyser = context.createAnalyser();
+			//音声の音量を取得した要素分格納する変数
+			var frequencies = new Uint8Array(analyser.frequencyBinCount);
+			// 音量を表示するためのdiv要素を取得
+			var volume = document.getElementById('volume');
+			var effect = document.getElementById('vol_effect');
+			var loop;
+			// 音量グループを表示するdiv要素を取得
+			var fugu = document.getElementById('fugu');
+			// 画像表示するためのdiv要素を取得
+			var fuguImg = document.getElementById('fugu-img');
+			// var OrgWidth = document.getElementById('fugu-img').naturalWidth;
+			// var OrgHeight = document.getElementById('fugu-img').naturalHeight;
+
+			//マイクの入力音声の振幅(音量)を取得する関数
+			var getFrequency = function () {
+				//周波数ごとの振幅を取得して配列に格納
+				analyser.getByteFrequencyData(frequencies);
+				return frequencies.reduce(function (previous, current) {
+					return previous + current;
+				}) / analyser.frequencyBinCount;
+			};
+			//端末のaudio(マイク)にアクセスする
+			navigator.mediaDevices.getUserMedia({ audio: true })
+				.then(function (stream) {
+					window.hackForMozzila = stream;
+					//音声の入力点(createMediaStreamSource)にマイク入力(stream)を設定し,
+					//出力点であるAnayserNodeオブジェクト(analyser)と接続(connect)させる。
+					context.createMediaStreamSource(stream).connect(analyser);
+				})
+				//マイクにアクセスできなかったorユーザーがマイクの利用を許可しなかった場合はエラーを表示
+				.catch(function (err) {
+					alert(err.message);
+				});
+			// 音量を取得して表示を更新
+			(loop = function () {
+				//マイクに入力されている音声の音量を取得、表示
+				volume = Math.floor(getFrequency());
+				volume.innerHTML = volume;
+				effect.style.width = volume + '%';
+				requestAnimationFrame(loop);
+
+				// volumeを表示
+				console.log(volume);
+
+				function resizeImagePercent(resizeRate) {
+					const resizeImg = document.getElementById("fugu-img");
+					resizeImg.width = resizeImg.naturalWidth * resizeRate;
+					resizeImg.height = resizeImg.naturalHeight * resizeRate;
+				}
+
+				if (0 < volume && volume <= 10) {
+					resizeImagePercent(0.1);
+					// fuguImg.src = 'fugu1.jpeg';
+					// fugu.innerHTML = "音量は10以下です";
+					// console.log("音量は10以下です");
+					return;
+				} else if (11 <= volume && volume <= 20) {
+					resizeImagePercent(0.2);
+					return;
+				} else if (21 <= volume && volume <= 30) {
+					resizeImagePercent(0.3);
+					return;
+				}
+				else if (31 <= volume && volume <= 40) {
+					resizeImagePercent(0.4);
+					return;
+				}
+				else if (41 <= volume && volume <= 50) {
+					resizeImagePercent(0.5);
+					return;
+				} else if (51 <= volume && volume <= 60) {
+					resizeImagePercent(0.6);
+					return;
+				} else if (61 <= volume && volume <= 70) {
+					resizeImagePercent(0.7);
+					return;
+				} else if (71 <= volume && volume <= 80) {
+					resizeImagePercent(0.8);
+					return;
+				} else if (81 <= volume && volume <= 90) {
+					resizeImagePercent(0.9);
+					return;
+				} else if (91 <= volume && volume <= 100) {
+					resizeImagePercent(1.0);
+					return;
+				} else if (101 <= volume && volume <= 110) {
+					resizeImagePercent(1.1);
+					return;
+				} else if (111 <= volume && volume <= 120) {
+					resizeImagePercent(0.9);
+					return;
+				} else if (121 <= volume) {
+					window.location.href = 'congrats/congrats.html';
+					// resizeImagePercent(0.8);
+					// return;
+				} else {
+					// alert('測定できません');
+				}
+				;
+			})();
+		}
+
+
+		// shout reload
+		$('#stop').click(function () {
+			window.location.reload();
+		});
+
 	</script>
 </body>
 
