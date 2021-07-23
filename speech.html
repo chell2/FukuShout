@@ -92,6 +92,14 @@
             display: none;
         }
 
+        .lets-try img {
+            width: 150px;
+            position: absolute;
+            left: 190px;
+            top: 150px;
+            animation: fuwafuwa 2s infinite ease-in-out;
+        }
+
         .fkdswrap {
             width: 100%;
             text-align: center;
@@ -137,8 +145,19 @@
         <button id="start" class="hidden">start</button>
         <!-- <h1>google books API</h1> -->
         <!-- <button id="btn">データ取得</button> -->
+        <!-- ふくふくと言ってみよう -->
+        <div id="try-text" class="lets-try hidden">
+            <img src="img/lets-try.png" alt=""><br>
+        </div>
         <div class="img-box">
             <img src="img/fuku01_1.png" alt="">
+        </div>
+        <!-- まるばつ -->
+        <div id="hanamaru" class="hidden">
+            <img src="./img/hanamaru.jpg" alt=""><br>
+        </div>
+        <div id="batsu" class="hidden">
+            <img src="./img/batsu.jpg" alt=""><br>
         </div>
         <div class="fkdswrap">
             <div id="explain" class="fkds">下関ではふぐのことを<span class="fuku-text">「ふく」</span>と呼ぶよ。<br>
@@ -175,17 +194,31 @@
             speech.onresult = (e) => {
                 console.log(e);
                 speech.stop();
+                //timer
+                // function batsuResult() {
+                //     $('#batsu').css({ 'display': 'hidden' });
+                // }
+                // setTimeout(batsuResult, 3000);
                 if (e.results[0].isFinal) {
                     const save = e.results[0][0].transcript;
                     document.body.style.background = e.results[0][0].transcript;
                     myboice = String(e.results[0][0].transcript);
                     console.log(myboice);
                     // console.log('haro');
+                    const hanamaru = document.getElementById('hanamaru');
+                    const batsu = document.getElementById('batsu');
                     if (myboice == "ふくふく") {
-                        console.log('okok');
+                        const hanamaru = document.getElementById('hanamaru');
+                        hanamaru.classList.remove('hidden');
+                        setTimeout(function () {
+                            hanamaru.classList.add('hidden');
+                        }, 3000);
                     }
                     else {
-                        console.log('nono');
+                        batsu.classList.remove('hidden');
+                        setTimeout(function () {
+                            batsu.classList.add('hidden');
+                        }, 3000);
                     }
                 }
             };
@@ -199,6 +232,7 @@
                 btn.textContent = 'waitiong...'
             };
         }
+
 
         // 泡背景
         jQuery(document).ready(function ($) {
@@ -240,7 +274,7 @@
         // ふくの説明ok
         $('#ok').click(function () {
             $('#explain,#ok').hide();
-            $('#start').show();
+            $('#start,#try-text').show();
         });
 
     </script>
