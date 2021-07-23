@@ -5,51 +5,93 @@
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Camera Test</title>
+	<title>fuku_camera</title>
+	<link href="normalize.css" rel="stylesheet">
 	<style>
-		canvas,
-		video {
-			border: 1px solid gray;
-
-			position: relative;
+		html,
+		body {
+			width: 100%;
+			height: 100%;
+			margin: 0;
 		}
 
-		.canvas {
-			position: relative;
+		body {
+			background: -moz-linear-gradient(top right, #94ffe8, #3498db, #08009c);
+			background: -webkit-linear-gradient(top right, #94ffe8, #3498db, #08009c);
+			background: linear-gradient(to bottom left, #94ffe8, #3498db, #08009c);
 		}
 
-		.fuku {
-			/* display: flex;
-			justify-content: center;
-			align-items: center; */
-			cursor: pointer;
-
+		.bubble {
 			position: absolute;
-			top: 5%;
-			left: 0;
+			border-radius: 100%;
+			border: 1px solid #fff;
+			bottom: 1px;
+		}
+
+		#vol_effect {
+			background: rgb(0, 204, 255);
+			text-align: right;
+			font-size: 25px;
+		}
+
+		.photo-area {
+			width: 100%;
+			height: 500px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			position: relative;
+		}
+
+		#camera {
+			position: absolute;
+			top: 139px;
+			left: 44%;
+		}
+
+		#newImg {
+			position: absolute;
+			top: 139px;
+			left: 44%;
+			box-sizing: border-box;
 		}
 	</style>
 </head>
 
-<body>
-	<h1>HTML5カメラ</h1>
-	<video id="camera" width="300" height="200"></video>
-	<div class="canvas">
-		<canvas id="picture" width="300" height="200"></canvas>
-	</div>
-	<div class="fuku">
-		<img src="img/fuku02_3.png">
-	</div>
-	<form>
-		<button type="button" id="shutter">シャッター</button>
-	</form>
-	<audio id="se" preload="auto">
-		<source src="camera-shutter1.mp3" type="audio/mp3">
-	</audio>
+<body class="bg" id="bg">
+	<!-- <img src="img/fuku.png"></img> -->
+	<!-- 音量 -->
+	<header>
+		<p id='volume'></p>
+		<div id='vol_effect'></div>
+		<input type='button' value='START' onclick='audio_input()' />
+		<button id="stop">STOP</button>
+		<form>
+			<button type="button" id="shutter">シャッター</button>
+		</form>
+		<div id="fugu" class="fugu"></div>
+		<div class="photo-area">
+			<img id="fugu-img" src="img/fuku02_3.png" class="fugu-img" alt="">
+			<div>
+				<video id="camera" width="170px" height="170px" style="border-radius: 50%; object-fit: cover; "></video>
+				<div>
+					<img id="newImg" style="height: 170px; width: 170px; border-radius: 50%; object-fit: cover;  ">
+				</div>
+			</div>
+			<canvas id="picture" width="300" height="200" style="display: none;"></canvas>
+			<audio id="se" preload="auto">
+				<source src="camera-shutter1.mp3" type="audio/mp3">
+			</audio>
+		</div>
+	</header>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<script src="Shards-master/shards.js"></script>
 	<script>
+		// カメラ
 		window.onload = () => {
-			const video = document.querySelector("#camera");
-			const canvas = document.querySelector("#picture");
+			const video = document.querySelector('#camera');
+			const canvas = document.querySelector('#picture');
 			const se = document.querySelector('#se');
 			/** カメラ設定 */
 			const constraints = {
@@ -57,7 +99,7 @@
 				video: {
 					width: 300,
 					height: 200,
-					facingMode: "user"   // フロントカメラを利用する
+					facingMode: 'user'   // フロントカメラを利用する
 					// facingMode: { exact: "environment" }  // リアカメラを利用する場合
 				}
 			};
@@ -77,8 +119,8 @@
 			/**
 			 * シャッターボタン
 			 */
-			document.querySelector("#shutter").addEventListener("click", () => {
-				const ctx = canvas.getContext("2d");
+			document.querySelector('#shutter').addEventListener('click', () => {
+				const ctx = canvas.getContext('2d');
 				// console.log(ctx);
 				// 演出的な目的で一度映像を止めてSEを再生する
 				video.pause();  // 映像を停止
@@ -88,21 +130,184 @@
 				}, 500);
 				// canvasに画像を貼り付ける
 				ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+				chgImg();
 			});
 		};
-		var pic = document.getElementById("picture");
-		var ctx = pic.getContext("2d");
+		var pic = document.getElementById('picture');
+		var ctx = pic.getContext('2d');
 		function chgImg() {
 			var png = pic.toDataURL();
-			document.getElementById("newImg").src = png;
+			document.getElementById('newImg').src = png;
 		};
+		// カメラ
+		jQuery(document).ready(function ($) {
+			var bArray = [];
+			//泡のサイズの配列
+			var sArray = [6, 8, 10, 12];
+			//泡が出る幅の範囲計算
+			for (var i = 0; i < $('body').width(); i++) {
+				bArray.push(i);
+			}
+			//配列からランダムに値を出す関数
+			function randomValue(arr) {
+				return arr[Math.floor(Math.random() * arr.length)];
+			}
+			setInterval(function () {
+				//泡のサイズをランダムに選定
+				var size = randomValue(sArray);
+				//body内のランダムな場所に泡を配置
+				$('body').append(
+					'<div class="bubble" style="left: ' + randomValue(bArray) + 'px; width: ' + size + 'px; height: ' + size + 'px; "></div>'
+				);
+				//5秒かけて下から上に泡が上るようにし、不透明度を下げる。上まで上った泡は取り除く
+				$('.bubble').animate({
+					'bottom': '100%',
+					'opacity': '-=0.7'
+				}, 5000, function () {
+					$(this).remove()
+				});
+				//0.35秒ごとに泡を発生させる
+			}, 350);
+		});
+		function audio_input() {
+			window.AudioContext = window.AudioContext || window.webkitAudioContext;
+			var context = new AudioContext();
+			//AnalyserNodeオブジェクト(音声解析用クラス)のインスタンス化
+			var analyser = context.createAnalyser();
+			//音声の音量を取得した要素分格納する変数
+			var frequencies = new Uint8Array(analyser.frequencyBinCount);
+			// 音量を表示するためのdiv要素を取得
+			var volume = document.getElementById('volume');
+			var effect = document.getElementById('vol_effect');
+			var loop;
+			// 音量グループを表示するdiv要素を取得
+			var fugu = document.getElementById('fugu');
+			// 画像表示するためのdiv要素を取得
+			var fuguImg = document.getElementById('fugu-img');
+			// var OrgWidth = document.getElementById('fugu-img').naturalWidth;
+			// var OrgHeight = document.getElementById('fugu-img').naturalHeight;
+			//マイクの入力音声の振幅(音量)を取得する関数
+			var getFrequency = function () {
+				//周波数ごとの振幅を取得して配列に格納
+				analyser.getByteFrequencyData(frequencies);
+				return frequencies.reduce(function (previous, current) {
+					return previous + current;
+				}) / analyser.frequencyBinCount;
+			};
+			//端末のaudio(マイク)にアクセスする
+			navigator.mediaDevices.getUserMedia({ audio: true })
+				.then(function (stream) {
+					window.hackForMozzila = stream;
+					//音声の入力点(createMediaStreamSource)にマイク入力(stream)を設定し,
+					//出力点であるAnayserNodeオブジェクト(analyser)と接続(connect)させる。
+					context.createMediaStreamSource(stream).connect(analyser);
+				})
+				//マイクにアクセスできなかったorユーザーがマイクの利用を許可しなかった場合はエラーを表示
+				.catch(function (err) {
+					alert(err.message);
+				});
+			// 音量を取得して表示を更新
+			(loop = function () {
+				//マイクに入力されている音声の音量を取得、表示
+				volume = Math.floor(getFrequency());
+				volume.innerHTML = volume;
+				effect.style.width = volume + '%';
+				requestAnimationFrame(loop);
+				// volumeを表示
+				console.log(volume);
+				function resizeImagePercent(resizeRate) {
+					const resizeImg = document.getElementById("fugu-img");
+					resizeImg.width = resizeImg.naturalWidth * resizeRate;
+					resizeImg.height = resizeImg.naturalHeight * resizeRate;
+				}
+				// function testteste(resizeRate) {
+				// 	const test = document.getElementById('newImg');
+				// 	test.width = test.naturalWidth * resizeRate;
+				// 	test.height = test.naturalHeight * resizeRate;
+				// }
+				// function camera(resizeRate) {
+				// 	const camera = document.getElementById('camera');
+				// 	camera.width = camera.naturalWidth * resizeRate;
+				// 	camera.height = camera.naturalHeight * resizeRate;
+				// }
+				if (0 < volume && volume <= 10) {
+					resizeImagePercent(0.1);
+					// testteste(0.1);
+					// camera(0.1);
+					// fuguImg.src = 'fugu1.jpeg';
+					// fugu.innerHTML = "音量は10以下です";
+					// console.log("音量は10以下です");
+					return;
+				} else if (11 <= volume && volume <= 20) {
+					resizeImagePercent(0.2);
+					// testteste(0.2);
+					// camera(0.2);
+					return;
+				} else if (21 <= volume && volume <= 30) {
+					resizeImagePercent(0.3);
+					// testteste(0.3);
+					// camera(0.3);
+					return;
+				} else if (31 <= volume && volume <= 40) {
+					resizeImagePercent(0.4);
+					// testteste(0.4);
+					// camera(0.4);
+					return;
+				} else if (41 <= volume && volume <= 50) {
+					resizeImagePercent(0.5);
+					// testteste(0.5);
+					// camera(0.5);
+					return;
+				} else if (51 <= volume && volume <= 60) {
+					resizeImagePercent(0.6);
+					// testteste(0.6);
+					// camera(0.6);
+					return;
+				} else if (61 <= volume && volume <= 70) {
+					resizeImagePercent(0.7);
+					// testteste(0.7);
+					// camera(0.7);
+					return;
+				} else if (71 <= volume && volume <= 80) {
+					resizeImagePercent(0.8);
+					// testteste(0.8);
+					// camera(0.8);
+					return;
+				} else if (81 <= volume && volume <= 90) {
+					resizeImagePercent(0.9);
+					// testteste(0.9);
+					// camera(0.9);
+					return;
+				} else if (91 <= volume && volume <= 100) {
+					resizeImagePercent(1.0);
+					// testteste(1.0);
+					// camera(1.0);
+					return;
+				} else if (101 <= volume && volume <= 110) {
+					resizeImagePercent(1.1);
+					// testteste(1.1);
+					// camera(1.1);
+					return;
+				} else if (111 <= volume && volume <= 120) {
+					resizeImagePercent(0.9);
+					// testteste(0.9);
+					// camera(0.9);
+					return;
+				} else if (121 <= volume) {
+					window.location.href = 'congrats/congrats.html';
+					// resizeImagePercent(0.8);
+					// return;
+				} else {
+					// alert('測定できません');
+				}
+				;
+			})();
+		}
+		// shout reload
+		$('#stop').click(function () {
+			window.location.reload();
+		});
 	</script>
-	<form>
-		<input type="button" value="画像に変換" onclick="chgImg()">
-	</form>
-	<div>
-		<img id="newImg">
-	</div>
 </body>
 
 </html>
