@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href=“normalize.css” rel=“stylesheet”>
+    <title>fuku_training</title>
+    <style>
+        #vol_effect {
+            /* background: green; */
+            text-align: right;
+            font-size: 40px;
+        }
+
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+        }
+
+        body {
+            background: -moz-linear-gradient(top right, #94ffe8, #3498db, #08009c);
+            background: -webkit-linear-gradient(top right, #94ffe8, #3498db, #08009c);
+            background: linear-gradient(to bottom left, #94ffe8, #3498db, #08009c);
+        }
+
+        .bubble {
+            position: absolute;
+            border-radius: 100%;
+            border: 1px solid #fff;
+            bottom: 1px;
+        }
+
+        #vol_effect {
+            background: rgb(0, 204, 255);
+            text-align: right;
+            font-size: 25px;
+        }
+
+        .photo-area {
+            width: 100%;
+            height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+
+        /* img-box */
+        .img-box {
+            width: 100%;
+            display: flex;
+            text-align: center;
+            align-items: center;
+            justify-content: center;
+            margin-top: 100px;
+        }
+
+        .img-box img {
+            animation: fuwafuwa 2s infinite ease-in-out;
+        }
+
+        @keyframes fuwafuwa {
+            0% {
+                transform: translate(0, 0);
+            }
+
+            50% {
+                transform: translate(0, -20px);
+            }
+
+            100% {
+                transform: translate(0, 0);
+            }
+        }
+
+        /* 文字装飾 */
+        fuku-text {
+            font-size: 100px;
+            font-weight: bolder;
+            color: #fdb933;
+            text-shadow: 0 0 13px #666;
+
+        }
+
+        /* 最初隠しておくもの */
+        .hidden {
+            display: none;
+        }
+
+        .fkdswrap {
+            width: 100%;
+            text-align: center;
+        }
+
+        .fkds::before {
+            content: "";
+            position: absolute;
+            top: -14px;
+            left: 50px;
+            width: 0px;
+            height: 0px;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 15px solid rgba(255, 255, 255, .6);
+        }
+
+        .fkds {
+            position: relative;
+            padding: 1em 3em;
+            border-radius: 15px;
+            background-color: rgba(255, 255, 255, .6);
+            font-size: 20px;
+            display: inline-block;
+            width: 60%;
+            text-align: left;
+            border-style: none;
+        }
+    </style>
+
+
+</head>
+
+<body>
+    <!-- 文字起こし -->
+    <main>
+        <button id="start" class="hidden">start</button>
+        <!-- <h1>google books API</h1> -->
+        <!-- <button id="btn">データ取得</button> -->
+        <div class="img-box">
+            <img src="img/fuku01_1.png" alt="">
+        </div>
+        <div class="fkdswrap">
+            <div id="explain" class="fkds">下関ではふぐのことを<span class="fuku-text">「ふく」</span>と呼ぶよ。<br>
+                この由来は、<span class="fugu-text">「不具」</span>や<span class="fuku-text">「不遇」</span>を連想させる<span
+                    class="fugu-text">「ふぐ」</span>ではなく<br>
+                <span class="fuku-text">福</span>として縁起をかついだといわれています。
+                <button id="ok">OK！ゲームをはじめる</button>
+            </div>
+        </div>
+
+        <!-- <div id="output"></div> -->
+    </main>
+    <!-- web speech api -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!-- axiosライブラリの読み込み -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="Shards-master/shards.js"></script>
+    <script>
+
+        // 文字起こし
+        'use strict';
+        {
+            const btn = document.querySelector('button');
+            const speech = new webkitSpeechRecognition();
+            speech.lang = 'ja-JP';
+            // speech.lang = 'en-US';
+            btn.addEventListener('click', () => {
+                // console.log('llll');
+                btn.sisabled = true;
+                speech.start();
+            });
+            let myboice;
+            speech.onresult = (e) => {
+                console.log(e);
+                speech.stop();
+                if (e.results[0].isFinal) {
+                    const save = e.results[0][0].transcript;
+                    document.body.style.background = e.results[0][0].transcript;
+                    myboice = String(e.results[0][0].transcript);
+                    console.log(myboice);
+                    // console.log('haro');
+                    if (myboice == "ふくふく") {
+                        console.log('okok');
+                    }
+                    else {
+                        console.log('nono');
+                    }
+                }
+            };
+            speech.onend = () => {
+                speech.start();
+            };
+            speech.onsoundstart = () => {
+                btn.textContent = 'qrocessing....'
+            };
+            speech.onsoundend = () => {
+                btn.textContent = 'waitiong...'
+            };
+        }
+
+        // 泡背景
+        jQuery(document).ready(function ($) {
+            var bArray = [];
+            //泡のサイズの配列
+            var sArray = [6, 8, 10, 12];
+
+            //泡が出る幅の範囲計算
+            for (var i = 0; i < $('body').width(); i++) {
+                bArray.push(i);
+            }
+
+            //配列からランダムに値を出す関数
+            function randomValue(arr) {
+                return arr[Math.floor(Math.random() * arr.length)];
+            }
+
+            setInterval(function () {
+                //泡のサイズをランダムに選定
+                var size = randomValue(sArray);
+
+                //body内のランダムな場所に泡を配置
+                $('body').append(
+                    '<div class="bubble" style="left: ' + randomValue(bArray) + 'px; width: ' + size + 'px; height: ' + size + 'px; "></div>'
+                );
+
+                //5秒かけて下から上に泡が上るようにし、不透明度を下げる。上まで上った泡は取り除く
+                $('.bubble').animate({
+                    'bottom': '100%',
+                    'opacity': '-=0.7'
+                }, 5000, function () {
+                    $(this).remove()
+                });
+
+                //0.35秒ごとに泡を発生させる
+            }, 350);
+        });
+
+        // ふくの説明ok
+        $('#ok').click(function () {
+            $('#explain,#ok').hide();
+            $('#start').show();
+        });
+
+    </script>
+</body>
+
+</html>

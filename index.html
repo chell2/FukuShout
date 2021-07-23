@@ -5,7 +5,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<!-- <meta http-equiv="refresh" content="3; url=shout.php"> -->
-	<title>FUKU-SHOUT</title>
+	<title>fuku_index</title>
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
@@ -29,36 +29,38 @@
 		}
 
 		.wrap {
-			padding-top: 1%;
 			display: flex;
 			justify-content: center;
-			align-items: flex-end;
+			align-items: center;
 		}
 
 		.leftbox {
 			width: 40%;
 			display: flex;
 			flex-direction: column;
-			align-items: flex-end;
-			padding-top: 10%;
+			align-items: right;
+			padding-top: 9%;
+			padding-bottom: 5%;
 		}
 
 		.title {
-			padding: 9% 0% 0 12%;
+			padding: 2% 0% 0 30%;
 			font-family: 'Fredoka One', cursive;
-			font-size: 100px;
+			font-size: 120px;
 			font-weight: bolder;
 			color: #fdb933;
 			text-shadow: 0 0 13px #666;
 			transform: rotate(-9deg);
 			-moz-transform: rotate(-9deg);
 			-webkit-transform: rotate(-9deg);
+			text-align: center;
 		}
 
 		.rightbox {
+			padding-top: 10%;
 			width: 60%;
 			text-align: center;
-			padding-top: 10%;
+			vertical-align: middle;
 		}
 
 		.fuku {
@@ -83,49 +85,91 @@
 			list-style: none;
 		}
 
-		btn {
-			margin-top: 5px;
+		*,
+		*:before,
+		*:after {
+			-webkit-box-sizing: inherit;
+			box-sizing: inherit;
 		}
 
-		a {
-			text-decoration: none;
-			color: #333;
-			font-size: 16px;
-			font-weight: bold;
-			background: transparent;
-			width: 130px;
-			height: 60px;
-			text-align: center;
-			line-height: 60px;
-			border: 2px solid #333;
-			border-radius: 5px;
+		html {
+			-webkit-box-sizing: border-box;
+			box-sizing: border-box;
+			font-size: 62.5%;
+		}
+
+		body {
+			padding: 30px;
+		}
+
+		.btn,
+		a.btn,
+		button.btn {
+			font-size: 1.6rem;
+			font-weight: 700;
+			line-height: 1.5;
 			position: relative;
-			z-index: 1;
-			display: block;
-			overflow: hidden;
-			transition: .3s;
+			display: inline-block;
+			padding: 1rem 4rem;
+			cursor: pointer;
+			-webkit-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			user-select: none;
+			-webkit-transition: all 0.3s;
+			transition: all 0.3s;
+			text-align: center;
+			vertical-align: middle;
+			text-decoration: none;
+			letter-spacing: 0.1em;
+			color: #212529;
+			border-radius: 0.5rem;
 		}
 
-		a::before {
-			content: "";
-			width: 120%;
-			height: 200%;
+		a.btn-svg {
+			font-weight: 700;
+			line-height: 54px;
+
+			width: 204px;
+			height: 54px;
+			padding: 0;
+
+			cursor: pointer;
+			text-decoration: none;
+
+			background-color: transparent;
+		}
+
+		a.btn-svg svg {
 			position: absolute;
-			top: -50%;
-			right: 0;
-			z-index: -1;
-			background: #333;
-			border-radius: 0 100% 100% 0;
-			transform: translateX(-100%);
-			transition: transform ease .3s;
+			top: 0;
+			left: 0;
+
+			width: 100%;
+			height: 100%;
 		}
 
-		a:hover {
-			color: #fff;
+		a.btn-svg svg rect {
+			-webkit-transition: all 400ms ease;
+			transition: all 400ms ease;
+
+			stroke: #000;
+			stroke-width: 2;
+			stroke-dasharray: 200px, 16px;
+			stroke-dashoffset: 70px;
 		}
 
-		a:hover::before {
-			transform: translateX(10%);
+		a.btn-svg:hover svg rect {
+			stroke-dashoffset: 284px;
+		}
+
+		a.btn-svg span {
+			color: #000;
+		}
+
+		.select {
+			padding-top: 7%;
+			text-align: right;
 		}
 	</style>
 </head>
@@ -134,10 +178,22 @@
 	<div class="wrap">
 		<div class="leftbox">
 			<div class="title">
-				FUKU<br>SHOUT<br>GAME
+				FUKU<br>FUKU<br>GAME!!
 			</div>
-			<div class="btn">
-				<a class="button" href="shout.html">>> START</a>
+			<div class="select">
+				<a href="shout.html" class="btn btn-svg">
+					<svg>
+						<rect x="2" y="2" rx="0" fill="none" width=200 height="50"></rect>
+					</svg>
+					<span>SHOUT！</span>
+				</a>
+				&emsp;
+				<a href="speech.html" class="btn btn-svg">
+					<svg>
+						<rect x="2" y="2" rx="0" fill="none" width=200 height="50"></rect>
+					</svg>
+					<span>TRAINING！</span>
+				</a>
 			</div>
 		</div>
 		<div class="rightbox">
@@ -163,7 +219,7 @@
 		});
 
 
-		const img = ["img/fuku01_1.png", "img/fuku02_1.png", "img/fuku03_1.png"];
+		const img = ["img/fuku01_1.png", "img/fuku02_1.png", "img/fuku03_1.png", "img/abehame.png"];
 
 		let count = -1;
 
